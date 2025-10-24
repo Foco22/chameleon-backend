@@ -53,8 +53,9 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: ${{ secrets.VM_SSH_PORT || 22 }}
           script: |
-            # Navigate to project directory
-            cd ~/piazza-api || exit 1
+            # Create project directory if it doesn't exist
+            mkdir -p ~/piazza-api
+            cd ~/piazza-api
 
             # Pull latest image
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
