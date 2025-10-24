@@ -1,7 +1,5 @@
-# Multi-stage build for optimized production image
-
-# Stage 1: Dependencies
-FROM node:18-alpine AS dependencies
+# Use Node.js LTS Alpine image
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
@@ -9,20 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
-
-# Stage 2: Production
-FROM node:18-alpine AS production
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Copy node_modules from dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
+# Install dependencies
+RUN npm install --production
 
 # Copy application source code
 COPY . .
