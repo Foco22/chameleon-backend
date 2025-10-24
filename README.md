@@ -225,3 +225,4 @@ curl -X GET http://localhost:3000/api/auth/me \
 - **dotenv** - Environment configuration
 - **cors** - Cross-origin resource sharing
 # Docker installed on VM - Ready for deployment
+# Fixed MongoDB URI secret format
