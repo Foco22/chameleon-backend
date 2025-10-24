@@ -150,3 +150,14 @@ sudo systemctl restart mongod
 sudo chown -R mongodb:mongodb /var/lib/mongodb
 sudo chown mongodb:mongodb /tmp/mongodb-27017.sock
 ```
+
+
+-----------------|----------------------------------|
+  | DOCKER_USERNAME | Tu username de Docker Hub        |
+  | DOCKER_PASSWORD | Token de Docker Hub              |
+  | VM_HOST         | IP de tu VM                      |
+  | VM_USERNAME     | Tu usuario de VM                 |
+  | VM_SSH_KEY      | cat ~/.ssh/id_ed25519 (en la VM) |
+  | MONGODB_URI     | Tu string de MongoDB Atlas       |
+  | JWT_SECRET      | Tu secret key                    |
+  | JWT_EXPIRE      | 7d    
