@@ -1,0 +1,551 @@
+{
+	"info": {
+		"_postman_id": "piazza-api-collection",
+		"name": "Piazza API - Complete Tests",
+		"description": "Complete API testing collection for Piazza social platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User 1 (John)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set(\"token\", response.data.token);",
+									"    pm.environment.set(\"userId\", response.data.user.id);",
+									"    console.log(\"Token saved:\", response.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@test.com\",\n  \"password\": \"Test123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/register",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "auth", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register User 2 (Maria)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set(\"token2\", response.data.token);",
+									"    console.log(\"Token2 saved:\", response.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"maria\",\n  \"email\": \"maria@test.com\",\n  \"password\": \"Maria123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/register",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "auth", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set(\"token\", response.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@test.com\",\n  \"password\": \"Test123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/auth/login",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/auth/me",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "auth", "me"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create Post (Tech)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set(\"postId\", response.data.post._id);",
+									"    console.log(\"Post ID saved:\", response.data.post._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Introduction to Cloud Computing\",\n  \"topics\": [\"Tech\"],\n  \"message\": \"Cloud computing revolutionizes how we build and deploy applications. It provides on-demand access to computing resources, enabling scalability and flexibility.\",\n  \"expirationMinutes\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post (Health)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Benefits of Regular Exercise\",\n  \"topics\": [\"Health\", \"Sport\"],\n  \"message\": \"Regular physical activity is one of the most important things you can do for your health. It helps control weight, reduces risk of diseases, and improves mental health.\",\n  \"expirationMinutes\": 30\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts by Topic (Tech)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts?topic=Tech",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"],
+							"query": [
+								{
+									"key": "topic",
+									"value": "Tech"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts by Status (Live)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts?status=Live",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"],
+							"query": [
+								{
+									"key": "status",
+									"value": "Live"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Post",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Interactions",
+			"item": [
+				{
+					"name": "Like Post (Maria)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token2}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}/like",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}", "like"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Try to Like Own Post (Should Fail)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}/like",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}", "like"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dislike Post (Maria)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token2}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}/dislike",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}", "dislike"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Comment (Maria)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token2}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Great introduction to cloud computing! Very helpful for beginners.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}/comment",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}", "comment"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Comment (John)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Thanks for reading! I'll post more about cloud architecture soon.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}/comment",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}", "comment"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Interaction History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token2}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/interactions/my-history",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "interactions", "my-history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post Interactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/{{postId}}/interactions",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "{{postId}}", "interactions"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Advanced Queries",
+			"item": [
+				{
+					"name": "Get Most Active Post (Tech)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/most-active/Tech",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "most-active", "Tech"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Most Active Post (Health)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/most-active/Health",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "most-active", "Health"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Expired Posts (Tech)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/posts/expired/Tech",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts", "expired", "Tech"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validation Tests",
+			"item": [
+				{
+					"name": "Invalid Post (Title Too Short)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Hi\",\n  \"topics\": [\"Tech\"],\n  \"message\": \"Short\",\n  \"expirationMinutes\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Topic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Invalid Topic Post\",\n  \"topics\": [\"InvalidTopic\"],\n  \"message\": \"This should fail with validation error about invalid topic.\",\n  \"expirationMinutes\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access Without Token (Should Fail)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"This Should Fail\",\n  \"topics\": [\"Tech\"],\n  \"message\": \"No token provided, should return 401.\",\n  \"expirationMinutes\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/posts",
+							"host": ["{{baseURL}}"],
+							"path": ["api", "posts"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:5000"
+		}
+	]
+}
