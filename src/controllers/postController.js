@@ -64,6 +64,8 @@ const getPosts = async (req, res) => {
     // Get posts
     const posts = await Post.find(query)
       .populate('owner', 'username email')
+      .populate('likes', 'username')
+      .populate('dislikes', 'username')
       .populate('comments.user', 'username')
       .sort({ createdAt: -1 });
 
@@ -91,6 +93,8 @@ const getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate('owner', 'username email')
+      .populate('likes', 'username')
+      .populate('dislikes', 'username')
       .populate('comments.user', 'username');
 
     if (!post) {
@@ -180,6 +184,8 @@ const likePost = async (req, res) => {
 
     await post.save();
     await post.populate('owner', 'username email');
+    await post.populate('likes', 'username');
+    await post.populate('dislikes', 'username');
 
     res.status(200).json({
       success: true,
@@ -266,6 +272,8 @@ const dislikePost = async (req, res) => {
 
     await post.save();
     await post.populate('owner', 'username email');
+    await post.populate('likes', 'username');
+    await post.populate('dislikes', 'username');
 
     res.status(200).json({
       success: true,
@@ -330,6 +338,8 @@ const addComment = async (req, res) => {
 
     await post.save();
     await post.populate('owner', 'username email');
+    await post.populate('likes', 'username');
+    await post.populate('dislikes', 'username');
     await post.populate('comments.user', 'username');
 
     res.status(201).json({
@@ -365,6 +375,8 @@ const getMostActivePost = async (req, res) => {
       status: 'Live'
     })
       .populate('owner', 'username email')
+      .populate('likes', 'username')
+      .populate('dislikes', 'username')
       .populate('comments.user', 'username');
 
     if (posts.length === 0) {
@@ -421,6 +433,8 @@ const getExpiredPosts = async (req, res) => {
 
     const posts = await Post.find(query)
       .populate('owner', 'username email')
+      .populate('likes', 'username')
+      .populate('dislikes', 'username')
       .populate('comments.user', 'username')
       .sort({ expirationTime: -1 });
 
