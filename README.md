@@ -20,14 +20,18 @@ cam-backend/
 │   ├── config/
 │   │   └── database.js          # MongoDB connection
 │   ├── controllers/
-│   │   └── authController.js    # Authentication logic
+│   │   ├── authController.js    # Authentication logic
+│   │   └── postController.js    # Post CRUD and interactions
 │   ├── middleware/
 │   │   ├── auth.js              # JWT verification middleware
 │   │   └── validation.js        # Input validation rules
 │   ├── models/
-│   │   └── User.js              # User schema and model
+│   │   ├── User.js              # User schema and model
+│   │   ├── Post.js              # Post schema with expiration
+│   │   └── Interaction.js       # Like/dislike/comment interactions
 │   ├── routes/
-│   │   └── authRoutes.js        # Authentication endpoints
+│   │   ├── authRoutes.js        # Authentication endpoints
+│   │   └── postRoutes.js        # Post and interaction endpoints
 │   ├── utils/
 │   │   └── generateToken.js     # JWT token generator
 │   └── server.js                # Express app configuration
