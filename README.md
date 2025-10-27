@@ -31,7 +31,16 @@ cam-backend/
 │   ├── utils/
 │   │   └── generateToken.js     # JWT token generator
 │   └── server.js                # Express app configuration
-├── .env                         # Environment variables
+├── kubernetes/
+│   ├── configmap.yaml           # Kubernetes ConfigMap
+│   ├── deployment.yaml          # Kubernetes Deployment (3 replicas)
+│   └── service.yaml             # LoadBalancer Service
+├── .github/
+│   └── workflows/
+│       └── deploy.yml           # CI/CD pipeline for VM deployment
+├── Dockerfile                   # Docker image configuration
+├── .dockerignore
+├── .env                         # Environment variables (local dev)
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -214,6 +223,142 @@ curl -X GET http://localhost:3000/api/auth/me \
 - Implement post expiration logic
 - Add topic-based filtering
 
+## Deployment Options
+
+### Option 1: Kubernetes (GKE) - Production
+
+**Architecture:**
+- 3 pod replicas for high availability
+- LoadBalancer service with external IP
+- ConfigMaps for configuration
+- Secrets for sensitive data
+
+**Deploy to Kubernetes:**
+
+```bash
+# 1. Create Kubernetes secrets (one-time setup)
+kubectl create secret generic piazza-secrets \
+  --from-literal=MONGODB_URI='your-mongodb-uri' \
+  --from-literal=JWT_SECRET='your-jwt-secret'
+
+# 2. Apply Kubernetes manifests
+kubectl apply -f kubernetes/
+
+# 3. Check deployment status
+kubectl get pods
+kubectl get service piazza-api-service
+
+# 4. Get external IP (may take 1-2 minutes)
+kubectl get service piazza-api-service
+
+# 5. Test the API
+curl http://<EXTERNAL-IP>/api/health
+```
+
+**Scale the deployment:**
+```bash
+# Scale to 5 replicas
+kubectl scale deployment piazza-api-deployment --replicas=5
+
+# Scale down to 3 replicas
+kubectl scale deployment piazza-api-deployment --replicas=3
+```
+
+**Monitor logs:**
+```bash
+# All pods
+kubectl logs -f deployment/piazza-api-deployment
+
+# Specific pod
+kubectl logs -f <pod-name>
+```
+
+### Option 2: VM with Docker - Development
+
+**Architecture:**
+- Single Docker container on Google Compute Engine VM
+- GitHub Actions CI/CD pipeline
+- Automatic deployment on push to main/master
+
+**GitHub Actions Workflow:**
+1. Build Docker image
+2. Push to Docker Hub
+3. SSH to VM
+4. Pull latest image
+5. Restart container
+
+**Current Deployments:**
+- **Kubernetes (GKE)**: `http://34.136.8.35` (3 replicas)
+- **VM with Docker**: `http://34.31.213.170:5000` (single instance)
+
+## Infrastructure Details
+
+### Kubernetes Configuration
+
+**ConfigMap** (`kubernetes/configmap.yaml`):
+- NODE_ENV=production
+- PORT=5000
+- JWT_EXPIRE=7d
+
+**Deployment** (`kubernetes/deployment.yaml`):
+- 3 replicas for high availability
+- Resource limits: 512Mi memory, 500m CPU per pod
+- Health checks: liveness and readiness probes
+- Rolling update strategy
+
+**Service** (`kubernetes/service.yaml`):
+- Type: LoadBalancer
+- External port: 80
+- Internal port: 5000
+
+### Docker Configuration
+
+**Dockerfile** features:
+- Multi-stage build (optional optimization)
+- Node.js 18 Alpine base image
+- Non-root user for security
+- Health check endpoint
+
+**Build and run locally:**
+```bash
+# Build image
+docker build -t piazza-api .
+
+# Run container
+docker run -d \
+  -p 5000:5000 \
+  -e MONGODB_URI='your-uri' \
+  -e JWT_SECRET='your-secret' \
+  --name piazza-api \
+  piazza-api
+```
+
+## CI/CD Pipeline
+
+**GitHub Actions** (`.github/workflows/deploy.yml`):
+
+Triggers:
+- Push to main/master branch
+- Manual workflow dispatch
+
+Steps:
+1. Checkout code
+2. Build Docker image with BuildX
+3. Push to Docker Hub
+4. SSH to VM
+5. Deploy container
+6. Verify deployment
+
+**Required GitHub Secrets:**
+- `DOCKER_USERNAME` - Docker Hub username
+- `DOCKER_PASSWORD` - Docker Hub password
+- `VM_HOST` - VM IP address
+- `VM_USERNAME` - SSH username
+- `VM_SSH_KEY` - SSH private key
+- `MONGODB_URI` - MongoDB connection string
+- `JWT_SECRET` - JWT signing secret
+- `JWT_EXPIRE` - Token expiration
+
 ## Technologies Used
 
 - **Express.js** - Web framework
@@ -224,5 +369,7 @@ curl -X GET http://localhost:3000/api/auth/me \
 - **express-validator** - Input validation
 - **dotenv** - Environment configuration
 - **cors** - Cross-origin resource sharing
-# Docker installed on VM - Ready for deployment
-# Fixed MongoDB URI secret format
+- **Docker** - Containerization
+- **Kubernetes** - Container orchestration
+- **GitHub Actions** - CI/CD automation
+- **Google Cloud Platform** - Cloud infrastructure (GKE, Compute Engine)
