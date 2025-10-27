@@ -44,6 +44,25 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE }}:buildcache,mode=max
 
+      # Step 4.5: Debug SSH configuration
+      - name: Debug SSH Configuration
+        run: |
+          echo "=== SSH Configuration Debug ==="
+          echo "VM_HOST is set: ${{ secrets.VM_HOST != '' }}"
+          echo "VM_USERNAME is set: ${{ secrets.VM_USERNAME != '' }}"
+          echo "VM_SSH_KEY is set: ${{ secrets.VM_SSH_KEY != '' }}"
+          echo "VM_HOST (masked): ${{ secrets.VM_HOST }}"
+          echo "VM_USERNAME (masked): ${{ secrets.VM_USERNAME }}"
+          echo "SSH Port: ${{ secrets.VM_SSH_PORT || 22 }}"
+          echo "SSH Key length: $(echo '${{ secrets.VM_SSH_KEY }}' | wc -c)"
+          echo "SSH Key first line: $(echo '${{ secrets.VM_SSH_KEY }}' | head -n1)"
+          echo "SSH Key last line: $(echo '${{ secrets.VM_SSH_KEY }}' | tail -n1)"
+
+          # Test basic connectivity
+          echo "=== Testing network connectivity ==="
+          ping -c 2 ${{ secrets.VM_HOST }} || echo "⚠️ Cannot ping VM"
+          nc -zv ${{ secrets.VM_HOST }} ${{ secrets.VM_SSH_PORT || 22 }} || echo "⚠️ Cannot connect to SSH port"
+
       # Step 5: Deploy to VM via SSH
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1.0.0
@@ -52,6 +71,7 @@ jobs:
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.VM_SSH_KEY }}
           port: ${{ secrets.VM_SSH_PORT || 22 }}
+          debug: true
           script: |
             # Create project directory if it doesn't exist
             mkdir -p ~/piazza-api
