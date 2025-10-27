@@ -99,6 +99,7 @@ jobs:
             docker stop piazza-api || true
             docker rm piazza-api || true
 
+
             # Run new container
             docker run -d \
               --name piazza-api \
