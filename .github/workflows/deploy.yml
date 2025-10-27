@@ -51,17 +51,30 @@ jobs:
           echo "VM_HOST is set: ${{ secrets.VM_HOST != '' }}"
           echo "VM_USERNAME is set: ${{ secrets.VM_USERNAME != '' }}"
           echo "VM_SSH_KEY is set: ${{ secrets.VM_SSH_KEY != '' }}"
-          echo "VM_HOST (masked): ${{ secrets.VM_HOST }}"
-          echo "VM_USERNAME (masked): ${{ secrets.VM_USERNAME }}"
+
+          # Show actual values (GitHub will mask them with ***)
+          echo "VM_HOST value: ${{ secrets.VM_HOST }}"
+          echo "VM_USERNAME value: ${{ secrets.VM_USERNAME }}"
           echo "SSH Port: ${{ secrets.VM_SSH_PORT || 22 }}"
+
+          # Verify SSH key format
           echo "SSH Key length: $(echo '${{ secrets.VM_SSH_KEY }}' | wc -c)"
-          echo "SSH Key first line: $(echo '${{ secrets.VM_SSH_KEY }}' | head -n1)"
-          echo "SSH Key last line: $(echo '${{ secrets.VM_SSH_KEY }}' | tail -n1)"
+          echo "SSH Key line count: $(echo '${{ secrets.VM_SSH_KEY }}' | wc -l)"
+          echo "SSH Key starts with: $(echo '${{ secrets.VM_SSH_KEY }}' | head -c 30)"
+          echo "SSH Key ends with: $(echo '${{ secrets.VM_SSH_KEY }}' | tail -c 30)"
+
+          # Expected values check
+          echo ""
+          echo "=== Expected Values ==="
+          echo "VM_HOST should be: 34.31.213.170"
+          echo "VM_USERNAME should be: francisco_macaya22"
+          echo "SSH Key should be: ~411 chars, 7 lines, start with '-----BEGIN OPENSSH PRIVATE KEY-----'"
 
           # Test basic connectivity
+          echo ""
           echo "=== Testing network connectivity ==="
-          ping -c 2 ${{ secrets.VM_HOST }} || echo "⚠️ Cannot ping VM"
-          nc -zv ${{ secrets.VM_HOST }} ${{ secrets.VM_SSH_PORT || 22 }} || echo "⚠️ Cannot connect to SSH port"
+          ping -c 2 ${{ secrets.VM_HOST }} || echo "⚠️ Cannot ping VM (this is OK if ICMP is blocked)"
+          nc -zv ${{ secrets.VM_HOST }} ${{ secrets.VM_SSH_PORT || 22 }} 2>&1 || echo "⚠️ Cannot connect to SSH port"
 
       # Step 5: Deploy to VM via SSH
       - name: Deploy to VM
@@ -72,6 +85,8 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: ${{ secrets.VM_SSH_PORT || 22 }}
           debug: true
+          timeout: 30s
+          command_timeout: 10m
           script: |
             # Create project directory if it doesn't exist
             mkdir -p ~/piazza-api
