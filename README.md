@@ -1,4 +1,4 @@
-# Piazza API - Phase B: Authentication & Verification
+# Piazza API - Backend 
 
 RESTful API for the Piazza social platform with JWT authentication.
 
@@ -47,10 +47,12 @@ cam-backend/
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v14 or higher) OR Docker
 - MongoDB (running locally or connection string)
 
 ## Installation & Setup
+
+### Option 1: Run with Node.js (Local Development)
 
 1. **Install dependencies:**
    ```bash
@@ -82,6 +84,46 @@ cam-backend/
    # Production mode
    npm start
    ```
+
+### Option 2: Run with Docker
+
+1. **Build the Docker image:**
+   ```bash
+   docker build -t piazza-api .
+   ```
+
+2. **Run the container:**
+   ```bash
+   docker run -d \
+     -p 5000:5000 \
+     -e MONGODB_URI='your-mongodb-uri' \
+     -e JWT_SECRET='your-jwt-secret' \
+     -e JWT_EXPIRE='7d' \
+     -e PORT=5000 \
+     --name piazza-api \
+     piazza-api
+   ```
+
+3. **Check container status:**
+   ```bash
+   docker ps
+   docker logs piazza-api
+   ```
+
+4. **Stop and remove container:**
+   ```bash
+   docker stop piazza-api
+   docker rm piazza-api
+   ```
+
+**Using Docker Compose (if available):**
+```bash
+# Start services
+docker-compose up -d
+
+# Stop services
+docker-compose down
+```
 
 ## Technologies Used
 
