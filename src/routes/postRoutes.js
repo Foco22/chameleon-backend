@@ -27,8 +27,8 @@ router.post('/', protect, createPostValidation, validate, createPost);
 
 // @route   GET /api/posts
 // @desc    Get all posts (with optional filters: ?topic=Tech&status=Live)
-// @access  Public
-router.get('/', getPosts);
+// @access  Private
+router.get('/', protect, getPosts);
 
 // @route   GET /api/posts/interactions/my-history
 // @desc    Get current user's interaction history
@@ -37,18 +37,18 @@ router.get('/interactions/my-history', protect, getMyInteractions);
 
 // @route   GET /api/posts/most-active/:topic
 // @desc    Get most active post for a topic
-// @access  Public
-router.get('/most-active/:topic', getMostActivePost);
+// @access  Private
+router.get('/most-active/:topic', protect, getMostActivePost);
 
 // @route   GET /api/posts/expired/:topic
 // @desc    Get expired posts by topic
-// @access  Public
-router.get('/expired/:topic', getExpiredPosts);
+// @access  Private
+router.get('/expired/:topic', protect, getExpiredPosts);
 
 // @route   GET /api/posts/:id
 // @desc    Get single post by ID
-// @access  Public
-router.get('/:id', getPost);
+// @access  Private
+router.get('/:id', protect, getPost);
 
 // @route   POST /api/posts/:id/like
 // @desc    Like a post
@@ -67,7 +67,7 @@ router.post('/:id/comment', protect, commentValidation, validate, addComment);
 
 // @route   GET /api/posts/:id/interactions
 // @desc    Get all interactions for a specific post
-// @access  Public
-router.get('/:id/interactions', getPostInteractions);
+// @access  Private
+router.get('/:id/interactions', protect, getPostInteractions);
 
 module.exports = router;
