@@ -142,6 +142,14 @@ const likePost = async (req, res) => {
       });
     }
 
+    // Check if user is the owner of the post
+    if (post.owner.toString() === req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot like your own post'
+      });
+    }
+
     // Check if user already liked
     const alreadyLiked = post.likes.includes(req.user._id);
 
@@ -227,6 +235,14 @@ const dislikePost = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Cannot dislike an expired post'
+      });
+    }
+
+    // Check if user is the owner of the post
+    if (post.owner.toString() === req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot dislike your own post'
       });
     }
 
