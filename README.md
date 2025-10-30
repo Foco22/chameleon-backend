@@ -62,10 +62,28 @@ cam-backend/
 2. **Configure environment variables:**
    Edit the `.env` file with your settings:
    ```env
-   PORT=3000
+   # Server Configuration
+   NODE_ENV=production
+   PORT=5000
+
+   # MongoDB Configuration
    MONGODB_URI=mongodb://localhost:27017/piazza
-   JWT_SECRET=your_secret_key
+   # Or use MongoDB Atlas for production:
+   # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/chamaleon?retryWrites=true&w=majority
+
+   # JWT Configuration
+   JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_minimum_32_characters
    JWT_EXPIRE=7d
+
+   # Docker Registry Configuration (Required for CI/CD)
+   DOCKER_USERNAME=your_docker_hub_username
+   DOCKER_PASSWORD=your_docker_hub_password_or_access_token
+
+   # VM Deployment Configuration (Required for CI/CD)
+   VM_HOST=your_vm_ip_address_or_hostname
+   VM_USERNAME=your_vm_ssh_username
+   VM_SSH_PORT=22
+   VM_SSH_KEY=your_private_ssh_key_content
    ```
 
 3. **Start MongoDB:**
@@ -96,10 +114,30 @@ cam-backend/
    ```bash
    docker run -d \
      -p 5000:5000 \
+     -e NODE_ENV='production' \
+     -e PORT=5000 \
      -e MONGODB_URI='your-mongodb-uri' \
      -e JWT_SECRET='your-jwt-secret' \
      -e JWT_EXPIRE='7d' \
+     -e DOCKER_USERNAME='your-docker-username' \
+     -e DOCKER_PASSWORD='your-docker-password' \
+     -e VM_HOST='your-vm-host' \
+     -e VM_USERNAME='your-vm-username' \
+     -e VM_SSH_PORT='22' \
+     -e VM_SSH_KEY='your-ssh-key' \
+     --name piazza-api \
+     piazza-api
+   ```
+
+   **Note:** Docker and VM environment variables are only needed if you're using the CI/CD pipeline. For local development, you only need:
+   ```bash
+   docker run -d \
+     -p 5000:5000 \
+     -e NODE_ENV='production' \
      -e PORT=5000 \
+     -e MONGODB_URI='your-mongodb-uri' \
+     -e JWT_SECRET='your-jwt-secret' \
+     -e JWT_EXPIRE='7d' \
      --name piazza-api \
      piazza-api
    ```
