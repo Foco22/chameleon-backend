@@ -21,6 +21,7 @@ RUN addgroup -g 1001 -S nodejs && \
 # Change ownership of app files
 RUN chown -R nodejs:nodejs /app
 
+
 # Switch to non-root user
 USER nodejs
 
