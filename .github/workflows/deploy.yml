@@ -11,6 +11,7 @@ env:
   DOCKER_IMAGE: piazza-api
   DOCKER_TAG: latest
 
+
 jobs:
   release:
     runs-on: ubuntu-latest
