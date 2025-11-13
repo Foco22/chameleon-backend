@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/database');
+const { version } = require('../package.json');
 
 // Load environment variables
 dotenv.config();
@@ -26,7 +27,7 @@ app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'Piazza API is running',
-    version: '1.0.0',
+    version,
     timestamp: new Date().toISOString()
   });
 });
